@@ -26,7 +26,7 @@ LOGame >> initialize [
 	width := sampleCell width.
 	height := sampleCell height.
 	self bounds: (50 @ 50 extent: (width * n) @ (height * n) + (2 * self borderWidth)).
-	cells := Matrix new: n tabulate: [ :i :j | self newCellAt: i at: j ]
+	cells := Array2D new: n tabulate: [ :i :j | self newCellAt: i at: j ]
 ]
 
 { #category : #initialization }

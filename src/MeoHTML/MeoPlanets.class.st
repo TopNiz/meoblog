@@ -33,7 +33,7 @@ Class {
 		'planet',
 		'frame'
 	],
-	#category : #MeoHTML
+	#category : #'MeoHTML-LightsOut'
 }
 
 { #category : #defaults }
