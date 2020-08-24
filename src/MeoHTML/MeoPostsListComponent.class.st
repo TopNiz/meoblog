@@ -1,5 +1,5 @@
 "
-List component of MeoPostsList
+Meo Posts list component
 "
 Class {
 	#name : #MeoPostsListComponent,
