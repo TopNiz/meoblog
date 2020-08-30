@@ -15,7 +15,7 @@ Class {
 	#instVars : [
 		'heading',
 		'speed',
-		'isBouncing'
+		'heat'
 	],
 	#category : #'MeoHTML-LightsOut'
 }
@@ -28,35 +28,78 @@ MeoParticle class >> newAt: aPoint [
 ]
 
 { #category : #private }
+MeoParticle >> bounceIfNearBottom: newPosition [
+	(self isNearBottom: newPosition)
+		ifTrue: [
+			self center: self center x @ (2 * owner bounds bottom - 20 - newPosition y).
+			self heading: 0 - self heading.
+			^ true ].
+	^ false
+]
+
+{ #category : #private }
+MeoParticle >> bounceIfNearLeft: newPosition [
+	(self isNearLeft: newPosition)
+		ifTrue: [ 
+			self center: (2 * owner bounds left + 20 - newPosition x) @ self center y.
+			self heading: 180 - self heading.
+			^ true ].
+	^ false
+]
+
+{ #category : #private }
+MeoParticle >> bounceIfNearRight: newPosition [
+	(self isNearRight: newPosition)
+		ifTrue: [  
+			self center: (2 * owner bounds right - 20 - newPosition x) @ self center y.
+			self heading: 180 - self heading.
+			^ true ].
+	^ false
+]
+
+{ #category : #private }
+MeoParticle >> bounceIfNearTop: newPosition [
+	(self isNearTop: newPosition)
+		ifTrue: [  
+			self center: self center x @ (2 * owner bounds top + 20 - newPosition y).
+			self heading: 0 - self heading.
+			^ true ].
+	^ false
+]
+
+{ #category : #private }
 MeoParticle >> bounceIn [
 	| newPosition |
 	newPosition := self center + self velocity.
-	(self isNearLeft: newPosition)
-		ifTrue: [ 
-			self center: (2 * owner bounds left + 20 - newPosition x @ self center y).
-			self heading: 180 - self heading ].
-	(self isNearRight: newPosition)
-		ifTrue: [ 
-			self center: (2 * owner bounds right - 20 - newPosition x @ self center y).
-			self heading: 180 - self heading ].
-	(self isNearTop: newPosition)
-		ifTrue: [ 
-			self center: (self center x @ (2 * owner bounds top + 20 - newPosition y)).
-			self heading: 0 - self heading ].
-	(self isNearBottom: newPosition)
-		ifTrue: [ 
-			self center: (self center x @ (2 * owner bounds bottom - 20 - newPosition y)).
-			self heading: 0 - self heading ].
-
+	
+	"Cold at left"
+	(self bounceIfNearLeft: newPosition)
+		ifTrue: [ self heat: self heat - 1 ].
+	
+	"Hot at right, top and bottom"
+	(self bounceIfNearRight: newPosition)
+	| (self bounceIfNearTop: newPosition)
+	| (self bounceIfNearBottom: newPosition)
+		ifTrue: [ self heat: self heat + 1 ].
+	
 	self changed
 ]
 
 { #category : #private }
 MeoParticle >> changeColor [
-	| r |
-	r := self color red + (1 / 255).
-	r := r min: 1.
-	self color: (Color r: r g: 0 b: 0)
+	| r g b |
+	r := self heat \\ 255.
+	g := (self heat / 255) \\ 255.
+	b := (self heat / 255 / 255) \\ 255.
+	r := r / 256.
+	g := g / 256.
+	b := b / 256.
+	self color: (Color r: r g: g b: b)
+]
+
+{ #category : #actions }
+MeoParticle >> coldIt [
+	self heat: self heat - 1
 ]
 
 { #category : #private }
@@ -68,11 +111,23 @@ MeoParticle >> collide [
 
 { #category : #private }
 MeoParticle >> collideWith: aParticle [
-	| oldHeading |
+	| oldHeading oldSpeed |
 	
+	oldSpeed := self speed.
 	oldHeading := self heading.
+	
+	self speed: aParticle speed.
 	self heading: aParticle heading.
-	aParticle heading: oldHeading
+	aParticle speed: oldSpeed.
+	aParticle heading: oldHeading.
+	
+	self heat < aParticle heat 
+		ifTrue: [ 
+			self heatIt.
+			aParticle coldIt ]
+		ifFalse: [ 
+			aParticle heatIt.
+			self coldIt ]
 ]
 
 { #category : #private }
@@ -90,6 +145,21 @@ MeoParticle >> heading: anObject [
 	heading := anObject
 ]
 
+{ #category : #accessing }
+MeoParticle >> heat [
+	^ heat
+]
+
+{ #category : #accessing }
+MeoParticle >> heat: anObject [
+	heat := anObject
+]
+
+{ #category : #actions }
+MeoParticle >> heatIt [
+	self heat: self heat + 1
+]
+
 { #category : #initialization }
 MeoParticle >> initialize [
 	| rg |
@@ -97,6 +167,7 @@ MeoParticle >> initialize [
 	rg := Random new.
 	heading := (0 to: 359) atRandom.
 	speed := 10 * rg next.
+	heat := 50.
 	
 	self color: Color black.
 	self borderColor: Color transparent.
@@ -126,10 +197,13 @@ MeoParticle >> isNearTop: aPosition [
 { #category : #private }
 MeoParticle >> nearestIn: someParticles [
 	^ someParticles select: [ :each |
-		"| d |
+		| d |
 		d := (self center + self velocity) dist: each center.
-		d < 20 and: [ d > 0 ]"
-		self center to: self center + self velocity intersects: each center to: each velocity ]
+		d < 20 and: [ d > 0 ]
+		"self center
+			to: 20 * self velocity normalized + self center
+			intersects: each center
+			to: 20 * each velocity normalized + each center" ]
 ]
 
 { #category : #accessing }

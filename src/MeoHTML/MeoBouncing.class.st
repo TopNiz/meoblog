@@ -15,6 +15,14 @@ Class {
 	#category : #'MeoHTML-LightsOut'
 }
 
+{ #category : #'menu actions' }
+MeoBouncing >> changeColor [
+	| r |
+	r := self color red + (1 / 255).
+	r := r min: 1.
+	self color: (Color r: r g: self color green b: self color blue)
+]
+
 { #category : #drawing }
 MeoBouncing >> drawOn: aCanvas [
 	"Clear the damageReported flag when redrawn."
