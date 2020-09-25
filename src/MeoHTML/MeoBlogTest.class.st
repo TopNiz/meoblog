@@ -87,5 +87,5 @@ MeoBlogTest >> testRemoveAllBlogPosts [
 { #category : #tests }
 MeoBlogTest >> testUnclassifiedBlogPosts [
 	blog writeBlogPost: post.
-	self assert: (blog allBlogPosts select: [ :p | p isUnclassified ] ) size equals: 0.
+	self assert: (blog allBlogPosts select: [ :p | p isUnclassified ]) size equals: 0.
 ]
