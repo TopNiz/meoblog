@@ -53,7 +53,7 @@ MeoBlog class >> reset [
 
 { #category : #accessing }
 MeoBlog >> allBlogPosts [
-	^posts
+	^ posts
 ]
 
 { #category : #accessing }
@@ -68,7 +68,7 @@ MeoBlog >> allCategories [
 
 { #category : #accessing }
 MeoBlog >> allVisibleBlogPosts [
-	^posts select: [ :p | p isVisible ]
+	^ posts select: [ :p | p isVisible ]
 ]
 
 { #category : #accessing }

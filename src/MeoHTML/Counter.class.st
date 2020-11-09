@@ -7,7 +7,7 @@ Class {
 	#instVars : [
 		'count'
 	],
-	#category : #MeoHTML
+	#category : #'MeoHTML-Other'
 }
 
 { #category : #'instance creation' }

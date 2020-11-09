@@ -4,7 +4,7 @@ Test Counter class
 Class {
 	#name : #CounterTest,
 	#superclass : #TestCase,
-	#category : #MeoHTML
+	#category : #'MeoHTML-Other'
 }
 
 { #category : #tests }
