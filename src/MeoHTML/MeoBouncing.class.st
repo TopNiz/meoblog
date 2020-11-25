@@ -35,7 +35,7 @@ MeoBouncing >> initialize [
 
 { #category : #rendering }
 MeoBouncing >> render [ 
-	self allMorphs do: [ :each | each moveForward: each speed headingTo: each heading ]
+	self submorphs do: [ :each | each moveForward: each speed headingTo: each heading ]
 ]
 
 { #category : #stepping }

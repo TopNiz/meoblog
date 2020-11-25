@@ -16,6 +16,7 @@ Class {
 { #category : #running }
 MeoBlogTest >> setUp [
 	"Hooks that subclasses may override to define the fixture of test."
+	super setUp .
 	previousRepository := VORepository current.
 	VORepository setRepository: VOMemoryRepository new.
 	
